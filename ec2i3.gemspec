@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'ec2i3'
-  s.version = '0.1.1'
+  s.version = '0.1.2'
   s.summary = 'EC2 in 3 steps: step 1. register the AWS account details in the XML registry, step 2. launch the EC2 instance, step 3. Publish the status of the instance using SimplePubSub.'
   s.authors = ['James Robertson']
   s.files = Dir['lib/ec2i3.rb']

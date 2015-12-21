@@ -12,7 +12,7 @@ require 'dynarex-password'
 
 class EC2i3 < InstantEC2
 
-  def initialize(reg, address: '127.0.0.1', port: '59000')
+  def initialize(reg, address: '127.0.0.1', port: '59000', async: false)
 
     @address, @port = address, port
 
@@ -24,21 +24,25 @@ class EC2i3 < InstantEC2
     enc_priv_key = entry.text('private_key').split(' ').map(&:to_i).pack('C*')
     private_key = Encrypt.load(enc_priv_key, passphrase)
 
-    super credentials: [entry.text('access_key_id'), private_key]
+    super credentials: [entry.text('access_key_id'), private_key], async: async
     @sps = SPSPub.new address: @address, port: @port
 
-    @hooks = {
+    hooks = {
       running: ->(ip){ 
 
         msg = "EC2i3: the instance is now accessible from %s" % [ip]
+        puts msg
         @sps.notice msg
 
       },
       stopping: ->(){ 
         msg = "EC2i3: the instance is now stopping"
+        puts msg
         @sps.notice msg
       }
     }
+    
+    @hooks.merge! hooks
     
   end
 
