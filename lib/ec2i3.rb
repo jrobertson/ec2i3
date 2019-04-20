@@ -19,13 +19,14 @@ class EC2i3 < InstantEC2
     entry = reg.get_key('hkey_apps/ec2i3')
 
     dp = DynarexPassword.new
-    passphrase = dp.reverse_lookup(entry.text('passphrase'), 
-                                                     entry.text('lookup_file'))
-    enc_priv_key = entry.text('private_key').split(' ').map(&:to_i).pack('C*')
+    passphrase = dp.reverse_lookup(entry.text('passphrase').to_s, 
+                                                entry.text('lookup_file').to_s)
+    enc_priv_key = entry.text('private_key').to_s.split(' ').map(&:to_i).pack('C*')
     private_key = Encrypt.load(enc_priv_key, passphrase)
 
-    super credentials: [entry.text('access_key_id'), private_key], async: async
+    super credentials: [entry.text('access_key_id').to_s, private_key], async: async
     @sps = SPSPub.new address: @address, port: @port
+
 
     hooks = {
       running: ->(ip){ 
@@ -41,9 +42,9 @@ class EC2i3 < InstantEC2
         @sps.notice msg
       }
     }
-    
+
     @hooks.merge! hooks
-    
+
   end
 
 end
